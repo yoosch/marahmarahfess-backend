@@ -1,33 +1,29 @@
 const db = require("../config/db");
+const menfessService = require("../services/menfessService");
 
 
 //Get all messages
-const getMessages = (req, res) => {
-    const query = "SELECT * FROM messages";
-    db.query(query, (err, results) => {
-        if (err) {
-            res.status(500).send(err);
-        }
-        else {
-            res.json(results);
-        }
-    })
-}
+const getMessages = async (req, res) => {
+    try {
+        await console.log(req.query);
+        const messages = await menfessService.getMessages(req.query);
+        res.json(messages);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 //Post a message
-const postMessage = (req, res) => {
-    const { name, receiver, message } = req.body;
-    const finalName = name && name.trim() !== "" ? name : "Anonim";
+const postMessage = async (req, res) => {
+    try {
+        const { name, receiver, message } = req.body;
 
-    const query = "INSERT INTO messages (name, receiver, message) VALUES (?, ?, ?)";
-    db.query(query, [finalName, receiver, message], (err, results) => {
-        if (err) {
-            res.status(500).send(err);
-        }
-        else {
-            res.status(201).json({ id: results.insertId, name, receiver, message });
-        }
-    })
-}
+        const result = await menfessService.sendMessage({ name, receiver, message });
+
+        res.status(201).json(result);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 module.exports = { getMessages, postMessage };
