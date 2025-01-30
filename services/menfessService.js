@@ -1,55 +1,40 @@
-const db = require("../config/db");
+const Message = require("../models/Message");
 
 const menfessService = {
-
     getMessages: async ({ limit = 50, start, end }) => {
-        return new Promise((resolve, reject) => {
-            let query = "SELECT * FROM messages";
-            let conditions = [];
-            let values = [];
-
+        try {
+            let query = {};
+            
             if (start) {
-                conditions.push("created_at >= ?");
-                values.push(start);
+                query.createdAt = { $gte: new Date(start) };
             }
 
             if (end) {
-                conditions.push("created_at <= ?");
-                values.push(end);
+                query.createdAt = { ...query.createdAt, $lte: new Date(end) };
             }
 
-            if (conditions.length > 0) {
-                query += " WHERE " + conditions.join(" AND ");
-            }
-
-            query += " ORDER BY created_at DESC";
-
-            query += " LIMIT ?";
-            values.push(parseInt(limit, 10));
-
-            console.log(query, values);
-
-            db.query(query, values, (err, results) => {
-                if (err) reject(err);
-                else resolve(results);
-            });
-        });
+            const messages = await Message.find(query).sort({ createdAt: -1 }).limit(parseInt(limit, 10));
+            return messages;
+        } catch (error) {
+            throw new Error(error.message);
+        }
     },
 
     sendMessage: async ({ name, receiver, message }) => {
-        return new Promise((resolve, reject) => {
+        try {
             if (!message || message.trim() === "") {
-                return reject(new Error("Message cannot be empty"));
+                throw new Error("Message cannot be empty");
             }
 
             const finalName = name && name.trim() !== "" ? name : "Anonim";
 
-            const query = "INSERT INTO messages (name, receiver, message, created_at) VALUES (?, ?, ?, NOW())";
-            db.query(query, [finalName, receiver, message], (err, result) => {
-                if (err) reject(err); 
-                else resolve({ id: result.insertId, name: finalName, receiver, message }); 
-            });
-        });
+            const newMessage = new Message({ name: finalName, receiver, message });
+            await newMessage.save();
+
+            return newMessage;
+        } catch (error) {
+            throw new Error(error.message);
+        }
     }
 };
 

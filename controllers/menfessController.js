@@ -1,28 +1,26 @@
-const db = require("../config/db");
-const menfessService = require("../services/menfessService");
-
-
-//Get all messages
+const Message = require("../models/Message");
+// Get all messages
 const getMessages = async (req, res) => {
     try {
-        await console.log(req.query);
-        const messages = await menfessService.getMessages(req.query);
+        const messages = await Message.find().sort({ createdAt: -1 });
         res.json(messages);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
-//Post a message
+// Post a message
 const postMessage = async (req, res) => {
     try {
         const { name, receiver, message } = req.body;
+        const finalName = name && name.trim() !== "" ? name : "Anonim";
 
-        const result = await menfessService.sendMessage({ name, receiver, message });
-
-        res.status(201).json(result);
+        const newMessage = new Message({ name: finalName, receiver, message });
+        await newMessage.save();
+        
+        res.status(201).json(newMessage);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 

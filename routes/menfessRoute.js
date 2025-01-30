@@ -3,10 +3,7 @@ const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const { postMessage, getMessages } = require("../controllers/menfessController");
 
-//route to get all messages
-router.get("/messages", getMessages);
-
-//route to post a menfess message
+// Middleware untuk set nama default
 const setDefaultName = (req, res, next) => {
     if (!req.body.name || req.body.name.trim() === "") {
         req.body.name = "Anonim";
@@ -14,6 +11,10 @@ const setDefaultName = (req, res, next) => {
     next();
 };
 
+// Route untuk mengambil semua pesan
+router.get("/messages", getMessages);
+
+// Route untuk mengirim pesan
 router.post(
     "/messages",
     [
