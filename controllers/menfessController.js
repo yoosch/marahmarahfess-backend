@@ -1,8 +1,9 @@
 const Message = require("../models/Message");
+const menfessService = require("../services/menfessService");
 // Get all messages
 const getMessages = async (req, res) => {
     try {
-        const messages = await Message.find().sort({ createdAt: -1 });
+        const messages = await menfessService.getMessages(req.query);
         res.json(messages);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -13,10 +14,8 @@ const getMessages = async (req, res) => {
 const postMessage = async (req, res) => {
     try {
         const { name, receiver, message } = req.body;
-        const finalName = name && name.trim() !== "" ? name : "Anonim";
 
-        const newMessage = new Message({ name: finalName, receiver, message });
-        await newMessage.save();
+        const newMessage = await menfessService.sendMessage({ name, receiver, message });
         
         res.status(201).json(newMessage);
     } catch (error) {

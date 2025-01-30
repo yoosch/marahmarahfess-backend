@@ -4,6 +4,7 @@ const menfessService = {
     getMessages: async ({ limit = 50, start, end }) => {
         try {
             let query = {};
+            // console.log(start, end, limit);
             
             if (start) {
                 query.createdAt = { $gte: new Date(start) };
@@ -14,6 +15,7 @@ const menfessService = {
             }
 
             const messages = await Message.find(query).sort({ createdAt: -1 }).limit(parseInt(limit, 10));
+            // console.log(messages);
             return messages;
         } catch (error) {
             throw new Error(error.message);
@@ -31,6 +33,7 @@ const menfessService = {
             const newMessage = new Message({ name: finalName, receiver, message });
             await newMessage.save();
 
+            console.log(newMessage);
             return newMessage;
         } catch (error) {
             throw new Error(error.message);
