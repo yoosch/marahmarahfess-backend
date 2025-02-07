@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Message = require("../models/Message");
 
 const menfessService = {
@@ -22,6 +23,15 @@ const menfessService = {
         }
     },
 
+    getReplies: async (messageId) => {
+        try {
+            const message = await Message.findById(messageId);
+            return message;
+        } catch (error) {
+            throw new Error(error);
+        }
+    },
+
     sendMessage: async ({ name, receiver, message }) => {
         try {
             if (!message || message.trim() === "") {
@@ -35,6 +45,21 @@ const menfessService = {
 
             console.log(newMessage);
             return newMessage;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+
+    sendReply: async (messageId, {name, reply}) => {
+        try {
+            const finalName = name && name.trim() !== "" ? name : "Anonim";
+            const updatedMessage = await Message.findByIdAndUpdate(
+                new mongoose.Types.ObjectId(messageId),
+                { $push: { replies: { name: finalName, reply, createdAt: new Date() } } },
+                { new: true }
+            );
+
+            return updatedMessage;
         } catch (error) {
             throw new Error(error.message);
         }

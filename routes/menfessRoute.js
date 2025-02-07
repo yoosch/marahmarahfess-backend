@@ -1,7 +1,7 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
-const { postMessage, getMessages } = require("../controllers/menfessController");
+const { postMessage, getMessages, postReply, getReplies } = require("../controllers/menfessController");
 
 // Middleware untuk set nama default
 const setDefaultName = (req, res, next) => {
@@ -13,6 +13,8 @@ const setDefaultName = (req, res, next) => {
 
 // Route untuk mengambil semua pesan
 router.get("/messages", getMessages);
+
+router.get("/messages/:messageId/replies", getReplies);
 
 // Route untuk mengirim pesan
 router.post(
@@ -28,6 +30,21 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
         postMessage(req, res);
+    }
+);
+
+// Route untuk mengirim reply
+router.post(
+    "/messages/:messageId/reply",
+    [
+        body("reply").notEmpty().withMessage('Reply is required'),
+    ],
+    (req, res) => {
+        const error = validationResult(req);
+        if (!error.isEmpty()) {
+            return res.status(400).json({ errors: error.array() });
+        }
+        postReply(req, res);
     }
 );
 
