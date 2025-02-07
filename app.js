@@ -20,6 +20,10 @@ app.use(express.json());
 //routes
 app.use("/api", menfessRoute);
 
+app.get('*', function (req, res) {
+  res.send('index.html')
+})
+
 app.get("/", (req, res) => {
     res.send("server is running");    
 })
