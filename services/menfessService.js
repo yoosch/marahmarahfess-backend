@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, get } = require("mongoose");
 const Message = require("../models/Message");
 
 const menfessService = {
@@ -20,6 +20,16 @@ const menfessService = {
             return messages;
         } catch (error) {
             throw new Error(error.message);
+        }
+    },
+
+    getMessage: async (messageId) => {
+        try {
+            const message = await Message.findById(messageId);
+            console.log(message);
+            return message;
+        } catch (error) {
+            throw new Error(error);
         }
     },
 

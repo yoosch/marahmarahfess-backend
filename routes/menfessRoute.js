@@ -1,7 +1,7 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
-const { postMessage, getMessages, postReply, getReplies } = require("../controllers/menfessController");
+const { postMessage, getMessages, getMessage, postReply, getReplies } = require("../controllers/menfessController");
 
 // Middleware untuk set nama default
 const setDefaultName = (req, res, next) => {
@@ -13,6 +13,9 @@ const setDefaultName = (req, res, next) => {
 
 // Route untuk mengambil semua pesan
 router.get("/messages", getMessages);
+
+// Route untuk mengambil pesan berdasarkan ID
+router.get("/messages/:messageId", getMessage);
 
 router.get("/messages/:messageId/replies", getReplies);
 

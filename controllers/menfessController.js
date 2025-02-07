@@ -10,6 +10,16 @@ const getMessages = async (req, res) => {
     }
 };
 
+const getMessage = async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const message = await menfessService.getMessage(messageId);
+        res.json(message);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 const getReplies = async (req, res) => {
     try {
         const { messageId } = req.params;
@@ -55,4 +65,4 @@ const postReply = async (req, res) => {
     }
 }
 
-module.exports = { getMessages, getReplies, postMessage, postReply };
+module.exports = { getMessages, getMessage, getReplies, postMessage, postReply };
