@@ -4,6 +4,7 @@ const messageSchema = new mongoose.Schema({
   name: { type: String, default: "Anonim" },
   receiver: { type: String, required: true },
   message: { type: String, required: true },
+  type: { type: String, default: "biasafess" },
   replies: [
     {
       name : { type: String, default: "Anonim" },
