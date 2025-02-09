@@ -34,6 +34,7 @@ const getReplies = async (req, res) => {
 const postMessage = async (req, res) => {
     try {
         const { name, receiver, message, type } = req.body;
+        // console.log(req.body);
 
         const newMessage = await menfessService.sendMessage({ name, receiver, message, type });
         

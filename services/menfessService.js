@@ -42,7 +42,7 @@ const menfessService = {
         }
     },
 
-    sendMessage: async ({ name, receiver, message }) => {
+    sendMessage: async ({ name, receiver, message, type }) => {
         try {
             if (!message || message.trim() === "") {
                 throw new Error("Message cannot be empty");
@@ -50,7 +50,7 @@ const menfessService = {
 
             const finalName = name && name.trim() !== "" ? name : "Anonim";
 
-            const newMessage = new Message({ name: finalName, receiver, message });
+            const newMessage = new Message({ name: finalName, receiver, message, type });
             await newMessage.save();
 
             console.log(newMessage);
