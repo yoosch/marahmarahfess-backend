@@ -7,6 +7,7 @@ const menfessRoute = require("../routes/menfessRoute");
 const e = require("express");
 const errorHandler = require("../middlewares/errorHandler");
 const app = express();
+const serverless = require('serverless-http');
 app.use(cors());
 const PORT = process.env.PORT || 3000;
 
@@ -31,3 +32,5 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })
+
+module.exports.handler = serverless(app);
