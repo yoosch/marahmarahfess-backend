@@ -1,36 +1,35 @@
-const dotenv = require("dotenv");  
+const dotenv = require("dotenv");
 dotenv.config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const menfessRoute = require("../routes/menfessRoute");
-const e = require("express");
 const errorHandler = require("../middlewares/errorHandler");
-const app = express();
 const serverless = require('serverless-http');
-app.use(cors());
-const PORT = process.env.PORT || 3000;
 
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch(err => console.error("MongoDB connection error:", err));
 
-// middleware
-app.use(express.json());
-
-//routes
+// Routes
 app.use("/api", menfessRoute);
 
-app.get('*', function (req, res) {
-  res.send('index.html')
-})
-
+// Root test
 app.get("/", (req, res) => {
-    res.send("server is running");    
-})
+  res.send("Server is running");
+});
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-})
+// 404 fallback
+app.use('*', (req, res) => {
+  res.status(404).send("Not found");
+});
 
+// Do NOT use app.listen() on Vercel
+module.exports = app;
 module.exports.handler = serverless(app);
